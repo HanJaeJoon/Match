@@ -1,4 +1,5 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +7,27 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
+
+@{
+    var user = Context.User;
+}
+@if (user.Identity?.IsAuthenticated == true)
+{
+    <div>@user.Identity.Name</div>
+    <div>@user.FindFirstValue(ClaimTypes.GivenName) @user.FindFirstValue(ClaimTypes.Surname)</div>
+    <img src="@(user.FindFirstValue("urn:google:image"))" />
+    <input id="logout" type="button" value="Logout" />
+}
+else {
+    <input id="login" type="button" value="Login with google" />
+}
+
+<script>
+    document.querySelector('#login')?.addEventListener('click', () => {
+        window.location.href = './login/GoogleLogin';
+    })
+
+    document.querySelector('#logout')?.addEventListener('click', () => {
+        window.location.href = './login/logout';
+    })
+</script>
